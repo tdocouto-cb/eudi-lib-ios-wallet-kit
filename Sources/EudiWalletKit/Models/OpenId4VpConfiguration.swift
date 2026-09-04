@@ -99,6 +99,14 @@ public struct OpenId4VpConfiguration: Sendable {
 	///
 	/// When provided all request with transaction data will be validated against the list
 	public let supportedTransactionDataTypes: [SupportedTransactionDataType]
+	/// Accept verifiers whose reader certificate does not chain to a trusted root.
+	///
+	/// Cleverbase addition. By default (`false`) an untrusted x509 verifier is
+	/// rejected before the request is shown. When `true` the request proceeds and
+	/// `PresentationSession.readerCertIssuerValid` still reports the real outcome,
+	/// so the host app can warn the user. Intended for testing against verifiers
+	/// whose root is not bundled; never for production.
+	public let acceptUntrustedReaderCertificates: Bool
 	
 	public static let defaultClientIdSchemes: [ClientIdScheme] = [.x509SanDns, .x509Hash, .redirectUri]
 
@@ -107,13 +115,15 @@ public struct OpenId4VpConfiguration: Sendable {
 		self.responseEncryptionConfiguration = nil
 		self.supportedTransactionDataTypes = []
 		self.preferredResponseMode = nil
+		self.acceptUntrustedReaderCertificates = false
 	}
 
-	public init(clientIdSchemes: [ClientIdScheme]? = nil, responseEncryptionConfiguration: ResponseEncryptionConfiguration? = nil, preferredResponseMode: PreferredResponseMode? = nil, supportedTransactionDataTypes: [SupportedTransactionDataType] = []) {
+	public init(clientIdSchemes: [ClientIdScheme]? = nil, responseEncryptionConfiguration: ResponseEncryptionConfiguration? = nil, preferredResponseMode: PreferredResponseMode? = nil, supportedTransactionDataTypes: [SupportedTransactionDataType] = [], acceptUntrustedReaderCertificates: Bool = false) {
 		self.clientIdSchemes = clientIdSchemes ?? Self.defaultClientIdSchemes
 		self.responseEncryptionConfiguration = responseEncryptionConfiguration
 		self.preferredResponseMode = preferredResponseMode
 		self.supportedTransactionDataTypes = supportedTransactionDataTypes
+		self.acceptUntrustedReaderCertificates = acceptUntrustedReaderCertificates
 	}
 }
 

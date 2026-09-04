@@ -361,7 +361,12 @@ public final class OpenId4VpService: @unchecked Sendable, PresentationService {
 		self.readerAuthValidated = isValid
 		self.readerCertificateValidationMessage = validationMessages.joined(separator: "\n")
 		self.certificateChain = certsData
-		return isValid
+		if !isValid {
+			logger.error("Reader certificate chain validation failed for leaf '\(x509leaf.subject.description)' issued by '\(x509leaf.issuer.description)' (\(certsDer.count) cert(s) in x5c, \(transferInfo.iaca.count) trust anchors): \(validationMessages.joined(separator: "; "))")
+		}
+		// Cleverbase: optionally let an untrusted verifier through. The real result
+		// is kept in readerAuthValidated so the session can still warn the user.
+		return isValid || openID4VpConfig.acceptUntrustedReaderCertificates
 	}
 
 	/// OpenId4VP wallet configuration
