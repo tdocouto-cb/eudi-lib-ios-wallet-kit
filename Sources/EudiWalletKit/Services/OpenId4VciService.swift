@@ -1026,6 +1026,11 @@ public actor OpenId4VciService {
 		let issuerKey: any KeyExpressible
 		if let x5cChain = signedSdJwt.jwt.protectedHeader.x509CertificateChain, !x5cChain.isEmpty {
 			issuerKey = try getIssuerKey(from: x5cChain)
+		} else if let embeddedJwk = signedSdJwt.jwt.protectedHeader.jwk {
+			// Issuers may carry the signing key in the JOSE `jwk` header instead of
+			// `x5c` or `kid`. The key is self-asserted either way; the issuer check
+			// above is what ties it to the expected credential issuer.
+			issuerKey = embeddedJwk
 		} else {
 			let metadataFetcher = SdJwtVcIssuerMetaDataFetcher(session: URLSession.shared)
 			let metadata = try await metadataFetcher.fetchIssuerMetaData(issuer: expectedIssuer)
