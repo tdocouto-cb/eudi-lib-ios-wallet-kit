@@ -32,10 +32,10 @@ import X509
 import class eudi_lib_sdjwt_swift.ClaimsVerifier
 import class eudi_lib_sdjwt_swift.CompactParser
 import class eudi_lib_sdjwt_swift.SDJWTVerifier
-import class eudi_lib_sdjwt_swift.SdJwtVcIssuerMetaDataFetcher
 import class eudi_lib_sdjwt_swift.SignatureVerifier
 import protocol eudi_lib_sdjwt_swift.KeyExpressible
 import struct eudi_lib_sdjwt_swift.SignedSDJWT
+import struct JSONWebKey.JWK
 
 public actor OpenId4VciService {
 	var issueReq: IssueRequest!
@@ -1032,12 +1032,11 @@ public actor OpenId4VciService {
 			// above is what ties it to the expected credential issuer.
 			issuerKey = embeddedJwk
 		} else {
-			let metadataFetcher = SdJwtVcIssuerMetaDataFetcher(session: URLSession.shared)
-			let metadata = try await metadataFetcher.fetchIssuerMetaData(issuer: expectedIssuer)
 			guard let kid = signedSdJwt.jwt.protectedHeader.keyID else {
 				throw PresentationSession.makeError(str: "Issued SD-JWT is missing both x5c chain and key identifier")
 			}
-			guard let issuerJwk = metadata?.jwks.first(where: { $0.keyID == kid }) else {
+			let issuerKeys = try await Self.fetchIssuerKeys(issuer: expectedIssuer)
+			guard let issuerJwk = issuerKeys.first(where: { $0.keyID == kid }) else {
 				throw PresentationSession.makeError(str: "Unable to resolve issuer signing key for issued SD-JWT")
 			}
 			issuerKey = issuerJwk
@@ -1047,6 +1046,33 @@ public actor OpenId4VciService {
 			claimVerifier: { nbf, exp in ClaimsVerifier(nbf: nbf, exp: exp) }
 		)
 		try validateVerificationResult(result)
+	}
+
+	/// Reads the issuer's `/.well-known/jwt-vc-issuer` metadata (SD-JWT VC §5)
+	/// and returns the keys it publishes. Keys are decoded one at a time and the
+	/// ones that fail are skipped: RFC 7517 lets a JWK carry any `use` value, and
+	/// the strict decoder in the SD-JWT library rejects the whole set when it
+	/// meets one it does not know, hiding the signing key published next to it.
+	private static func fetchIssuerKeys(issuer: URL) async throws -> [JWK] {
+		guard var components = URLComponents(url: issuer, resolvingAgainstBaseURL: false) else {
+			throw PresentationSession.makeError(str: "Invalid SD-JWT issuer URL")
+		}
+		components.path = "/.well-known/jwt-vc-issuer" + components.path
+		guard let metadataURL = components.url else {
+			throw PresentationSession.makeError(str: "Invalid SD-JWT issuer URL")
+		}
+		let metadata = try JSON(data: try await URLSession.shared.data(from: metadataURL).0)
+		guard URL(string: metadata["issuer"].stringValue) == issuer else {
+			throw PresentationSession.makeError(str: "Issuer mismatch in metadata")
+		}
+		var keys = metadata["jwks"]["keys"]
+		if keys.type != .array, let jwksURL = URL(string: metadata["jwks_uri"].stringValue) {
+			keys = try JSON(data: try await URLSession.shared.data(from: jwksURL).0)["keys"]
+		}
+		return keys.arrayValue.compactMap { key in
+			guard let data = try? key.rawData() else { return nil }
+			return try? JSONDecoder().decode(JWK.self, from: data)
+		}
 	}
 
 	private func validateSdJwtBindingKeys(_ serialized: String, publicCoseKeys: inout [CoseKey]) throws {
