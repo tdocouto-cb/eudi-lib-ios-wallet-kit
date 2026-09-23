@@ -110,8 +110,14 @@ public actor OpenId4VciService {
 			// redundant and some issuers cross-multiply them (N keys -> N*N creds).
 			let bindingKeys: [BindingKey] = [.attestation(keyAttestationJWT: funcKeyAttestationJWT!)]
 			return (bindingKeys, publicCoseKeys.map { Data($0.toCBOR(options: CBOROptions()).encode()) })
-		} else if config.keyAttestationsConfig != nil, configuration.supportsJwtProofTypeWithAttestation {
-			throw PresentationSession.makeError(str: "JWT proof with attestation is not yet supported in wallet")
+		} else if config.keyAttestationsConfig != nil, configuration.supportsJwtProofTypeWithAttestation, let firstKey = publicKeys.first {
+			// `jwt` proof carrying the key attestation in its `key_attestation` header
+			// (CS-01 7.5). CS-04 7.3 asks for a single proof, signed by the key at
+			// index 0 of `attested_keys`, even when the attestation covers a batch.
+			// Same shape as upstream 0.53.0.
+			funcKeyAttestationJWT = { nonce in try await self.getKeyAttestationJWT(publicKeys, nonce: nonce) }
+			let bindingKey = try createBindingKey(firstKey, secureAreaSigningAlg: selectedAlgorithm, unlockData: unlockData, index: 0, funcKeyAttestationJWT: funcKeyAttestationJWT, proofSubject: proofSubject)
+			return ([bindingKey], publicCoseKeys.map { Data($0.toCBOR(options: CBOROptions()).encode()) })
 		}
 		let bindingKeys = try publicKeys.enumerated().map { try createBindingKey($0.element, secureAreaSigningAlg: selectedAlgorithm, unlockData: unlockData, index: $0.offset, funcKeyAttestationJWT: funcKeyAttestationJWT, proofSubject: proofSubject) }
 		return (bindingKeys, publicCoseKeys.map { Data($0.toCBOR(options: CBOROptions()).encode()) })
