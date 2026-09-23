@@ -43,6 +43,8 @@ public actor OpenId4VciService {
 	let logger: Logger
 	var config: OpenId4VciConfiguration
 	static nonisolated(unsafe) var credentialOfferCache = [String: CredentialOffer]()
+	/// Clock skew tolerated when checking an issued credential's `nbf`/`exp`.
+	static let claimsClockSkew: TimeInterval = 60
 	static nonisolated(unsafe) var issuerMetadataCache = [String: (CredentialIssuerId, CredentialIssuerMetadata)]()
 	var networking: Networking
 	var authRequested: AuthorizationRequested?
@@ -1043,7 +1045,11 @@ public actor OpenId4VciService {
 		}
 		let result = try verifier.verifyIssuance(
 			issuersSignatureVerifier: { jws in try SignatureVerifier(signedJWT: jws, publicKey: issuerKey) },
-			claimVerifier: { nbf, exp in ClaimsVerifier(nbf: nbf, exp: exp) }
+			// Issuers commonly set `nbf` to the moment of issuance; with clocks a few
+			// seconds apart the library, which allows no skew at all, rejects a valid
+			// credential as not valid yet. Judge the claims from slightly ahead of now,
+			// the same 60 s the status-list checks already tolerate.
+			claimVerifier: { nbf, exp in ClaimsVerifier(nbf: nbf, exp: exp, currentDate: Date().addingTimeInterval(Self.claimsClockSkew)) }
 		)
 		try validateVerificationResult(result)
 	}
