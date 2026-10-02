@@ -39,6 +39,8 @@ import struct JSONWebKey.JWK
 
 public actor OpenId4VciService {
 	var issueReq: IssueRequest!
+	/// The DPoP key id the last issuer was built with; stored on issued documents.
+	var usedDpopKeyId: String?
 	let uiCulture: String?
 	let logger: Logger
 	var config: OpenId4VciConfiguration
@@ -303,7 +305,9 @@ public actor OpenId4VciService {
 	func getIssuer(offer: CredentialOffer, dpopKeyId: String? = nil) async throws -> Issuer {
 		var dpopConstructor: DPoPConstructorType? = nil
 		if config.requireDpop {
-			dpopConstructor = try await config.makePoPConstructor(popUsage: .dpop, privateKeyId: dpopKeyId ?? issueReq.dpopKeyId, algorithms: offer.authorizationServerMetadata.dpopSigningAlgValuesSupported, keyOptions: config.dpopKeyOptions)
+			let key = config.dpopKey(credentialIssuerId: offer.credentialIssuerIdentifier.url.absoluteString, clientAttestationAlgorithms: offer.authorizationServerMetadata.clientAttestationPopSigningAlgValuesSupported, storedId: dpopKeyId, defaultId: issueReq.dpopKeyId)
+			usedDpopKeyId = key.id
+			dpopConstructor = try await config.makePoPConstructor(popUsage: .dpop, privateKeyId: key.id, algorithms: offer.authorizationServerMetadata.dpopSigningAlgValuesSupported, keyOptions: key.keyOptions)
 		}
 		let vciConfig = try await config.toOpenId4VCIConfig(credentialIssuerId: offer.credentialIssuerIdentifier.url.absoluteString, clientAttestationPopSigningAlgValuesSupported: offer.authorizationServerMetadata.clientAttestationPopSigningAlgValuesSupported)
 		return try Issuer(authorizationServerMetadata: offer.authorizationServerMetadata, issuerMetadata: offer.credentialIssuerMetadata, config: vciConfig, parPoster: Poster(session: networking), tokenPoster: Poster(session: networking), requesterPoster: Poster(session: networking), deferredRequesterPoster: Poster(session: networking), notificationPoster: Poster(session: networking), noncePoster: Poster(session: networking), dpopConstructor: dpopConstructor)
@@ -319,7 +323,9 @@ public actor OpenId4VciService {
 		var dpopConstructor: DPoPConstructor? = nil
 		let dpopSigningAlgValuesSupported = configuration.dpopSigningAlgValuesSupported?.map { JWSAlgorithm(name: $0) }
 		if config.requireDpop {
-			dpopConstructor = try await config.makePoPConstructor(popUsage: .dpop, privateKeyId: dpopKeyId ?? issueReq.dpopKeyId, algorithms: dpopSigningAlgValuesSupported, keyOptions: config.dpopKeyOptions)
+			let key = config.dpopKey(credentialIssuerId: configuration.credentialIssuerIdentifier, clientAttestationAlgorithms: configuration.clientAttestationPopSigningAlgValuesSupported?.map { JWSAlgorithm(name: $0) }, storedId: dpopKeyId, defaultId: issueReq.dpopKeyId)
+			usedDpopKeyId = key.id
+			dpopConstructor = try await config.makePoPConstructor(popUsage: .dpop, privateKeyId: key.id, algorithms: dpopSigningAlgValuesSupported, keyOptions: key.keyOptions)
 		}
 		let (_, issuerMetadata) = try await resolveIssuerMetadata()
 		guard let authorizationServer = issuerMetadata.authorizationServers?.first else {
@@ -488,6 +494,7 @@ public actor OpenId4VciService {
 		}
 		let (auth, issuer, credentialInfos) = try await openId4VCIServices.first!.authorizeOffer(offerUri: offerUri, docTypeModels: docTypes, txCodeValue: txCodeValue, authorized: authorized, forceRefreshToken: forceRefreshToken, backgroundOnly: backgroundOnly, dpopKeyId: dpopKeyId)
 		let proofSubject = await issuer.config.client.id
+		let savedDpopKeyId = await openId4VCIServices.first!.usedDpopKeyId ?? dpopKeyId
 		let issuerName = offer.credentialIssuerMetadata.display.map(\.displayMetadata).getName(uiCulture) ?? offer.credentialIssuerIdentifier.url.host ?? offer.credentialIssuerIdentifier.url.absoluteString
 		let issuerIdentifier = offer.credentialIssuerIdentifier.url.absoluteString
 		let issuerLogoUrl = offer.credentialIssuerMetadata.display.map(\.displayMetadata).getLogo(uiCulture)?.uri?.absoluteString
@@ -496,7 +503,7 @@ public actor OpenId4VciService {
 				group.addTask {
 					let (bindingKeys, publicKeys) = try await openId4VCIService.initSecurityKeys(credentialInfos[i], proofSubject: proofSubject)
 					let docData = try await openId4VCIService.issueDocumentByOfferUrl(issuer: issuer, offer: offer, authorizedOutcome: auth, configuration: credentialInfos[i], bindingKeys: bindingKeys, publicKeys: publicKeys, promptMessage: promptMessage)
-					return try await self.finalizeIssuing(issueOutcome: docData, docType: docTypes[i].docTypeOrVct, format: credentialInfos[i].format, issueReq: openId4VCIService.issueReq, deleteId: documentId, issuer: issuer, dpopKeyId: dpopKeyId, issuerName: issuerName, issuerIdentifier: issuerIdentifier, issuerLogoUrl: issuerLogoUrl)
+					return try await self.finalizeIssuing(issueOutcome: docData, docType: docTypes[i].docTypeOrVct, format: credentialInfos[i].format, issueReq: openId4VCIService.issueReq, deleteId: documentId, issuer: issuer, dpopKeyId: savedDpopKeyId, issuerName: issuerName, issuerIdentifier: issuerIdentifier, issuerLogoUrl: issuerLogoUrl)
 				}
 			}
 			var result =  [WalletStorage.Document]()
@@ -918,7 +925,7 @@ public actor OpenId4VciService {
 		var issuedNotificationId: String? = nil
 		var issuedAuthorizedRequest: AuthorizedRequest? = nil
 		do {
-			let savedDpopKeyId = dpopKeyId ?? issueReq.dpopKeyId
+			let savedDpopKeyId = dpopKeyId ?? usedDpopKeyId ?? issueReq.dpopKeyId
 			var dataToSave: Data; var docTypeToSave = ""
 			var docMetadata: DocMetadata; var displayName: String?
 			let pds = issueOutcome.pendingOrDeferredStatus

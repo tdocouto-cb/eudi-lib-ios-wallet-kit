@@ -186,6 +186,18 @@ extension OpenId4VciConfiguration {
 		return client
 	}
 
+	/// The key DPoP proofs are signed with. When the wallet authenticates with a
+	/// wallet instance attestation, issuers bind the access token to the WIA's
+	/// `cnf` key (WE BUILD CS-01 §7.4, CS-04), so DPoP uses that same key.
+	/// A key id already stored on a document from before keeps its own options,
+	/// so refreshing such a document still matches the key its token is bound to.
+	func dpopKey(credentialIssuerId: String, clientAttestationAlgorithms: [JWSAlgorithm]?, storedId: String?, defaultId: String) -> (id: String, keyOptions: KeyOptions?) {
+		let attestationKeyId = generatePopKeyId(credentialIssuerId: credentialIssuerId)
+		if let storedId, storedId != attestationKeyId { return (storedId, dpopKeyOptions) }
+		if let keyAttestationsConfig, clientAttestationAlgorithms != nil { return (attestationKeyId, keyAttestationsConfig.popKeyOptions) }
+		return (storedId ?? defaultId, dpopKeyOptions)
+	}
+
 	/// Generates a deterministic key alias based on the CredentialIssuerId.
 	///
 	/// This ensures the same key is reused for the same issuer across sessions. The alias is
