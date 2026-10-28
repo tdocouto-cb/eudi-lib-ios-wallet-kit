@@ -1,5 +1,5 @@
 {
-  "originHash" : "2c808d98e8681cb9ad6868441508544b9ccf7684f09abdb16fb95ceace55b364",
+  "originHash" : "81613ea9a4d09b7b539c0a6bb3ba596adc4454b6ec68834806b36a08bce9b908",
   "pins" : [
     {
       "identity" : "cryptoswift",
@@ -40,10 +40,10 @@
     {
       "identity" : "eudi-lib-ios-openid4vci-swift",
       "kind" : "remoteSourceControl",
-      "location" : "https://github.com/eu-digital-identity-wallet/eudi-lib-ios-openid4vci-swift.git",
+      "location" : "https://github.com/tdocouto-cb/eudi-lib-ios-openid4vci-swift.git",
       "state" : {
-        "revision" : "9126d54189c08f4ee38f78f800bc6011648d8bf4",
-        "version" : "0.55.5"
+        "branch" : "cleverbase-dev",
+        "revision" : "dea65bde607272c8618c35411978669cfb9831d6"
       }
     },
     {
