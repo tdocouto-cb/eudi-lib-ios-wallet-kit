@@ -210,6 +210,8 @@ let newDocs = try await wallet.issueDocumentsByOfferUrl(
 )
 ```
 
+Each offered credential is a separate request. When a credential fails, the wallet still stores the other credentials. ``IssuerResponse/documents`` contains the stored documents and ``IssuerResponse/failures`` contains the credentials that the wallet did not store. The method throws only when it stores no document.
+
 
 ### Authorization code flow
 
