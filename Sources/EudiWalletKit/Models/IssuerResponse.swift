@@ -33,11 +33,14 @@ public struct IssuerResponse: Sendable {
 	/// available when ``OpenId4VciConfiguration/validateRegistrationCertificate`` is enabled.
 	/// Preserved even when validation fails (expiry, revocation, trust) so the issuer identity can be inspected.
 	public let wrpIssuerPolicy: WrpRegistrationPolicy?
+	/// The offered credentials that the wallet did not store. The stored credentials are in ``documents``.
+	public let failures: [IssuanceFailure]
 
-	public init(documents: [WalletStorage.Document], wrpIssuerWarnings: [String: [RegistrationPolicyViolation]]?, wrpIssuerPolicy: WrpRegistrationPolicy? = nil) {
+	public init(documents: [WalletStorage.Document], wrpIssuerWarnings: [String: [RegistrationPolicyViolation]]?, wrpIssuerPolicy: WrpRegistrationPolicy? = nil, failures: [IssuanceFailure] = []) {
 		self.documents = documents
 		self.wrpIssuerWarnings = wrpIssuerWarnings
 		self.wrpIssuerPolicy = wrpIssuerPolicy
+		self.failures = failures
 		if let warns = wrpIssuerWarnings, !warns.isEmpty { logger.info("Issuer registration warnings: \(warns)") }
 	}
 
@@ -53,5 +56,20 @@ public struct IssuerResponse: Sendable {
 			result[document.id] = warnings
 		}
 		return result
+	}
+}
+
+/// An offered credential that the wallet did not store.
+public struct IssuanceFailure: Sendable {
+	/// The credential configuration identifier of the offer.
+	public let credentialConfigurationIdentifier: String
+	public let displayName: String
+	/// The description of the error.
+	public let message: String
+
+	public init(credentialConfigurationIdentifier: String, displayName: String, message: String) {
+		self.credentialConfigurationIdentifier = credentialConfigurationIdentifier
+		self.displayName = displayName
+		self.message = message
 	}
 }

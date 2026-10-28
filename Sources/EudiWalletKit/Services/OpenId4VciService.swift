@@ -62,6 +62,8 @@ public actor OpenId4VciService {
 	public private(set) var wrpIssuerWarnings: [String: [RegistrationPolicyViolation]]?
 	/// The WRP registration policy decoded from the WRPRC during the last `getIssuer(offer:)` call, if any.
 	public private(set) var wrpIssuerPolicy: WrpRegistrationPolicy?
+	/// The offered credentials that the last `issueDocumentsByOfferUrl` call did not store.
+	public private(set) var issuanceFailures = [IssuanceFailure]()
 	@MainActor var simpleAuthWebContext: SimpleAuthenticationPresentationContext!
 	typealias FuncKeyAttestationJWT = @Sendable (_ nonce: String?) async throws -> KeyAttestationJWT
 
@@ -601,6 +603,7 @@ public actor OpenId4VciService {
 		}
 		var openId4VCIServices = [OpenId4VciService]()
 		var transactionIds = [String]()
+		issuanceFailures = []
 		do {
 			for (i, docTypeModel) in docTypes.enumerated() {
 				guard let docTypeIdentifier = docTypeModel.docTypeIdentifier else { continue }
@@ -623,24 +626,48 @@ public actor OpenId4VciService {
 			let issuerIdentifier = offer.credentialIssuerIdentifier.url.absoluteString
 			let issuerName = offer.credentialIssuerMetadata.display.map(\.displayMetadata).getName(uiCulture) ?? issuerIdentifier
 			let issuerLogoUrl = offer.credentialIssuerMetadata.display.map(\.displayMetadata).getLogo(uiCulture)?.uri?.absoluteString
-			let documents = try await withThrowingTaskGroup(of: WalletStorage.Document.self) { group in
+			// Each offered credential is a separate request. A failed credential does not stop the others.
+			let outcomes = await withTaskGroup(of: (Int, Result<WalletStorage.Document, any Error>).self) { group in
 				for (i, openId4VCIService) in openId4VCIServices.enumerated() {
 					let transactionId = transactionIds[i]
 					group.addTask {
-						let (bindingKeys, publicKeys) = try await openId4VCIService.initSecurityKeys(credentialInfos[i], clientId: clientId)
-						let docData = try await openId4VCIService.issueDocumentByOfferUrl(issuer: issuer, offer: offer, authorizedOutcome: auth, configuration: credentialInfos[i], bindingKeys: bindingKeys, publicKeys: publicKeys, promptMessage: promptMessage)
-						return try await self.finalizeIssuing(issueOutcome: docData, docType: docTypes[i].docTypeOrVct, format: credentialInfos[i].format, issueReq: openId4VCIService.issueReq, deleteId: documentId, issuer: issuer, issuerName: issuerName, issuerIdentifier: issuerIdentifier, issuerLogoUrl: issuerLogoUrl, transactionId: transactionId)
+						do {
+							let (bindingKeys, publicKeys) = try await openId4VCIService.initSecurityKeys(credentialInfos[i], clientId: clientId)
+							let docData = try await openId4VCIService.issueDocumentByOfferUrl(issuer: issuer, offer: offer, authorizedOutcome: auth, configuration: credentialInfos[i], bindingKeys: bindingKeys, publicKeys: publicKeys, promptMessage: promptMessage)
+							return (i, .success(try await self.finalizeIssuing(issueOutcome: docData, docType: docTypes[i].docTypeOrVct, format: credentialInfos[i].format, issueReq: openId4VCIService.issueReq, deleteId: documentId, issuer: issuer, issuerName: issuerName, issuerIdentifier: issuerIdentifier, issuerLogoUrl: issuerLogoUrl, transactionId: transactionId)))
+						} catch {
+							return (i, .failure(error))
+						}
 					}
 				}
-				var result =  [WalletStorage.Document]()
-				for try await doc in group { result.append(doc) }
-				return result
+				var result = [(Int, Result<WalletStorage.Document, any Error>)]()
+				for await outcome in group { result.append(outcome) }
+				return result.sorted { $0.0 < $1.0 }
+			}
+			let (documents, failures) = try Self.splitOutcomes(outcomes)
+			for (i, error) in failures {
+				await logIssuanceFailure(ids: [transactionIds[i]], error: error)
+				logger.error("Offered credential \(docTypes[i].credentialConfigurationIdentifier) failed: \(error.localizedDescription)")
+			}
+			issuanceFailures = failures.map { i, error in
+				IssuanceFailure(credentialConfigurationIdentifier: docTypes[i].credentialConfigurationIdentifier, displayName: docTypes[i].displayName, message: error.localizedDescription)
 			}
 			return documents
 		} catch {
 			await logIssuanceFailure(ids: transactionIds, error: error)
 			throw error
 		}
+	}
+
+	/// Returns the stored documents and the failed offers, by offer index.
+	/// Throws the first error when no document is stored.
+	static func splitOutcomes(_ outcomes: [(Int, Result<WalletStorage.Document, any Error>)]) throws -> (documents: [WalletStorage.Document], failures: [(Int, any Error)]) {
+		let documents = outcomes.compactMap { try? $0.1.get() }
+		let failures = outcomes.compactMap { i, result -> (Int, any Error)? in
+			if case .failure(let error) = result { (i, error) } else { nil }
+		}
+		if documents.isEmpty, let (_, error) = failures.first { throw error }
+		return (documents, failures)
 	}
 
 	func getCredentialConfiguration(credentialIssuerIdentifier: String, issuerDisplay: [Display], credentialsSupported: [CredentialConfigurationIdentifier: CredentialSupported], identifier: String?, docType: String?, vct: String?, batchCredentialIssuance: BatchCredentialIssuance?, dpopSigningAlgValuesSupported: [String]?, clientAttestationPopSigningAlgValuesSupported: [String]?) throws -> CredentialConfiguration {
