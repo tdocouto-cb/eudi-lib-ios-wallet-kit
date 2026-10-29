@@ -52,16 +52,16 @@
       "location" : "https://github.com/tdocouto-cb/eudi-lib-ios-openid4vp-swift.git",
       "state" : {
         "branch" : "cleverbase-dev",
-        "revision" : "a83e208aa430054e3ac2159ec08faaebc2080c83"
+        "revision" : "007c588a627f95779d4228e0e4e67f7601ade904"
       }
     },
     {
       "identity" : "eudi-lib-ios-statium-swift",
       "kind" : "remoteSourceControl",
-      "location" : "https://github.com/eu-digital-identity-wallet/eudi-lib-ios-statium-swift.git",
+      "location" : "https://github.com/tdocouto-cb/eudi-lib-ios-statium-swift.git",
       "state" : {
-        "revision" : "da66b71423a5b8a27799d105449d3c0e154230dc",
-        "version" : "0.6.0"
+        "branch" : "cleverbase-dev",
+        "revision" : "616d37b91266335e71471cd53081b831979265ab"
       }
     },
     {

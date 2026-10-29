@@ -18,7 +18,7 @@ let package = Package(
 		.package(url: "https://github.com/eu-digital-identity-wallet/eudi-lib-sdjwt-swift.git", exact: "0.14.7"),
 		.package(url: "https://github.com/tdocouto-cb/eudi-lib-ios-openid4vp-swift.git", branch: "cleverbase-dev"),
 		.package(url: "https://github.com/tdocouto-cb/eudi-lib-ios-openid4vci-swift.git", branch: "cleverbase-dev"),
-		.package(url: "https://github.com/eu-digital-identity-wallet/eudi-lib-ios-statium-swift.git", exact: "0.6.0"),
+		.package(url: "https://github.com/tdocouto-cb/eudi-lib-ios-statium-swift.git", branch: "cleverbase-dev"),
     	.package(url: "https://github.com/apple/swift-docc-plugin", from: "1.5.0"),
 	],
 	targets: [
