@@ -1,5 +1,5 @@
 {
-  "originHash" : "81613ea9a4d09b7b539c0a6bb3ba596adc4454b6ec68834806b36a08bce9b908",
+  "originHash" : "a5fa60e44f9c1055b190ac84a47274810b8ad87b9aea22fffd225a7770db2e6d",
   "pins" : [
     {
       "identity" : "cryptoswift",
@@ -52,7 +52,7 @@
       "location" : "https://github.com/tdocouto-cb/eudi-lib-ios-openid4vp-swift.git",
       "state" : {
         "branch" : "cleverbase-dev",
-        "revision" : "007c588a627f95779d4228e0e4e67f7601ade904"
+        "revision" : "cb4ebdb515710d70bb5560c9f60baa4f12d7d672"
       }
     },
     {
@@ -132,8 +132,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/apple/swift-collections.git",
       "state" : {
-        "revision" : "a0cb0954ecb21e4e31b0070e6ed5674e8556685a",
-        "version" : "1.6.0"
+        "revision" : "f96b909e1a9e469620bc5037c1e24e00153f376f",
+        "version" : "1.7.5"
       }
     },
     {
