@@ -52,7 +52,7 @@
       "location" : "https://github.com/tdocouto-cb/eudi-lib-ios-openid4vp-swift.git",
       "state" : {
         "branch" : "cleverbase-dev",
-        "revision" : "cb4ebdb515710d70bb5560c9f60baa4f12d7d672"
+        "revision" : "1bb8a08773f434d8996580da5be591581a430d9e"
       }
     },
     {
@@ -61,7 +61,7 @@
       "location" : "https://github.com/tdocouto-cb/eudi-lib-ios-statium-swift.git",
       "state" : {
         "branch" : "cleverbase-dev",
-        "revision" : "5304ddee5369e151508fe5aabfa6e29d3c111164"
+        "revision" : "f18ca9d1bcc4ba32bea98107eb68004395f24876"
       }
     },
     {
