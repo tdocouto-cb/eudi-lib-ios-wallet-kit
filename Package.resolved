@@ -61,7 +61,7 @@
       "location" : "https://github.com/tdocouto-cb/eudi-lib-ios-statium-swift.git",
       "state" : {
         "branch" : "cleverbase-dev",
-        "revision" : "616d37b91266335e71471cd53081b831979265ab"
+        "revision" : "5304ddee5369e151508fe5aabfa6e29d3c111164"
       }
     },
     {
@@ -186,8 +186,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/niscy-eudiw/SwiftCBOR.git",
       "state" : {
-        "revision" : "e8fef8613a4c32b150885fec8f32c2ebfe0501c4",
-        "version" : "0.6.5"
+        "revision" : "baf102872d85bf3a50d2401f8d9151cc6e85c8fc",
+        "version" : "0.6.9"
       }
     },
     {
