@@ -1,5 +1,5 @@
 {
-  "originHash" : "a5fa60e44f9c1055b190ac84a47274810b8ad87b9aea22fffd225a7770db2e6d",
+  "originHash" : "0d402e7afbfe1746a823222f7fdba813e0ec6812c048237f029095fb28fc875f",
   "pins" : [
     {
       "identity" : "cryptoswift",
@@ -49,10 +49,10 @@
     {
       "identity" : "eudi-lib-ios-openid4vp-swift",
       "kind" : "remoteSourceControl",
-      "location" : "https://github.com/tdocouto-cb/eudi-lib-ios-openid4vp-swift.git",
+      "location" : "https://github.com/eu-digital-identity-wallet/eudi-lib-ios-openid4vp-swift.git",
       "state" : {
-        "branch" : "cleverbase-dev",
-        "revision" : "7f1828e46f481c8db8b50d202cec8f892fcce674"
+        "revision" : "d65bd3cc8c4e2aff3b3496926c29bde69e1d4def",
+        "version" : "0.44.1"
       }
     },
     {
@@ -186,8 +186,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/niscy-eudiw/SwiftCBOR.git",
       "state" : {
-        "revision" : "baf102872d85bf3a50d2401f8d9151cc6e85c8fc",
-        "version" : "0.6.9"
+        "revision" : "89360f74e895effa3b65e5e2f2c1e359160f8b69",
+        "version" : "0.7.0"
       }
     },
     {
