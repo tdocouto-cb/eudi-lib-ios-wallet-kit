@@ -1,5 +1,5 @@
 {
-  "originHash" : "c40f873d80a276295f3187cee50c80110714e539833ccc5eb38559b6e77de0ef",
+  "originHash" : "a5fa60e44f9c1055b190ac84a47274810b8ad87b9aea22fffd225a7770db2e6d",
   "pins" : [
     {
       "identity" : "cryptoswift",
@@ -40,28 +40,28 @@
     {
       "identity" : "eudi-lib-ios-openid4vci-swift",
       "kind" : "remoteSourceControl",
-      "location" : "https://github.com/eu-digital-identity-wallet/eudi-lib-ios-openid4vci-swift.git",
+      "location" : "https://github.com/tdocouto-cb/eudi-lib-ios-openid4vci-swift.git",
       "state" : {
-        "revision" : "79d5df2fc179f21edf9f5bef7916aa2fc32c818e",
-        "version" : "0.55.6"
+        "branch" : "cleverbase-dev",
+        "revision" : "e8ec5a96c4c57135fa3ca66547033bb78d9c5ac6"
       }
     },
     {
       "identity" : "eudi-lib-ios-openid4vp-swift",
       "kind" : "remoteSourceControl",
-      "location" : "https://github.com/eu-digital-identity-wallet/eudi-lib-ios-openid4vp-swift.git",
+      "location" : "https://github.com/tdocouto-cb/eudi-lib-ios-openid4vp-swift.git",
       "state" : {
-        "revision" : "d65bd3cc8c4e2aff3b3496926c29bde69e1d4def",
-        "version" : "0.44.1"
+        "branch" : "cleverbase-dev",
+        "revision" : "7f1828e46f481c8db8b50d202cec8f892fcce674"
       }
     },
     {
       "identity" : "eudi-lib-ios-statium-swift",
       "kind" : "remoteSourceControl",
-      "location" : "https://github.com/eu-digital-identity-wallet/eudi-lib-ios-statium-swift.git",
+      "location" : "https://github.com/tdocouto-cb/eudi-lib-ios-statium-swift.git",
       "state" : {
-        "revision" : "f1412752f75ab91fbdd9a81b5c6f12a0e814baa2",
-        "version" : "0.6.1"
+        "branch" : "cleverbase-dev",
+        "revision" : "f18ca9d1bcc4ba32bea98107eb68004395f24876"
       }
     },
     {
@@ -186,8 +186,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/niscy-eudiw/SwiftCBOR.git",
       "state" : {
-        "revision" : "89360f74e895effa3b65e5e2f2c1e359160f8b69",
-        "version" : "0.7.0"
+        "revision" : "baf102872d85bf3a50d2401f8d9151cc6e85c8fc",
+        "version" : "0.6.9"
       }
     },
     {
