@@ -24,8 +24,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/eu-digital-identity-wallet/eudi-lib-ios-iso18013-data-transfer.git",
       "state" : {
-        "revision" : "52c3d05075981f560573d80a3e38b63093f9832d",
-        "version" : "0.28.4"
+        "revision" : "14387b2ebcc0399741e688132c8b186a50d71319",
+        "version" : "0.28.5"
       }
     },
     {
