@@ -25,7 +25,7 @@
       "location" : "https://github.com/tdocouto-cb/eudi-lib-ios-iso18013-data-transfer.git",
       "state" : {
         "branch" : "cleverbase-dev",
-        "revision" : "c623504fe10e45fcaabe4aa04ee519584ec39d14"
+        "revision" : "d3710995a992c9433bd7bbf61b75db50d1a15abf"
       }
     },
     {
@@ -43,7 +43,7 @@
       "location" : "https://github.com/tdocouto-cb/eudi-lib-ios-openid4vci-swift.git",
       "state" : {
         "branch" : "cleverbase-dev",
-        "revision" : "e8ec5a96c4c57135fa3ca66547033bb78d9c5ac6"
+        "revision" : "a10836483893cec5762438b8dbeb2a073accbd73"
       }
     },
     {
