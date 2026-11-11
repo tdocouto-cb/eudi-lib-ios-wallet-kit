@@ -77,8 +77,8 @@ public struct OpenId4VciConfiguration: Sendable {
 	/// Policy for the `iss` parameter of the authorization response (RFC 9207).
 	///
 	/// - `.never` (default): the wallet does not check `iss`.
-	/// - `.ifSupported`: the wallet compares a received `iss` with the authorization server `issuer`. When the server sets `authorization_response_iss_parameter_supported`, `iss` is mandatory.
-	/// - `.required`: as `.ifSupported`, and the server must set `authorization_response_iss_parameter_supported`. Otherwise the issuance fails before the redirect.
+	/// - `.ifSupported`: the wallet compares a received `iss` with the authorization server `issuer`. When the server sets `authorization_response_iss_parameter_supported`, `iss` is necessary.
+	/// - `.required`: the same as `.ifSupported`, but the server must set `authorization_response_iss_parameter_supported`. If it does not, the issuance fails before the redirect.
 	public let authResponseIssChecking: AuthorizationResponseIssChecking
 	/// Presents the authorization URL to the user during the authorization code flow and returns the redirect.
 	public let authorizationFlowHandler: (any AuthorizationFlowHandler)

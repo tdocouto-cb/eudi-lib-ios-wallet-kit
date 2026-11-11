@@ -5,7 +5,7 @@ import Testing
 
 @Suite("Authorization response iss checking")
 struct AuthorizationResponseIssCheckingTests {
-    @Test("Does not check iss by default")
+    @Test("Uses .never by default")
     func defaultPolicyIsNever() async throws {
         let config = try await OpenId4VciConfiguration(credentialIssuerURL: nil, clientId: "wallet")
             .toOpenId4VCIConfig(credentialIssuerId: "https://issuer.example.com", clientAttestationPopSigningAlgValuesSupported: nil, context: ThreadSafeAuthContext())
