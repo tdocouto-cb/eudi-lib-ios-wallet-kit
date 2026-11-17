@@ -14,7 +14,7 @@ let package = Package(
 	],
 	dependencies: [
 		.package(url: "https://github.com/tdocouto-cb/eudi-lib-ios-iso18013-data-transfer.git", branch: "cleverbase-dev"),
-		.package(url: "https://github.com/eu-digital-identity-wallet/eudi-lib-ios-wallet-storage.git", exact: "0.26.2"),
+		.package(url: "https://github.com/tdocouto-cb/eudi-lib-ios-wallet-storage.git", branch: "cleverbase-dev"),
 		.package(url: "https://github.com/eu-digital-identity-wallet/eudi-lib-sdjwt-swift.git", exact: "0.14.7"),
 		.package(url: "https://github.com/eu-digital-identity-wallet/eudi-lib-ios-openid4vp-swift.git", exact: "0.44.2"),
 		.package(url: "https://github.com/eu-digital-identity-wallet/eudi-lib-ios-openid4vci-swift.git", exact: "0.55.7"),
