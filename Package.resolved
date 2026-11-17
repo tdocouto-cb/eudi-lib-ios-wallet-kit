@@ -1,5 +1,5 @@
 {
-  "originHash" : "2ba7018105d66465d5a319a1c8403b98b89d927fae51dccc5a0152c5ea59f090",
+  "originHash" : "501d9d6c5d4de6e0d1ed7aa3ee5f74a46d50c212711b768cd2fec4e0778e5283",
   "pins" : [
     {
       "identity" : "cryptoswift",
@@ -15,8 +15,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/eu-digital-identity-wallet/eudi-lib-ios-iso18013-data-model.git",
       "state" : {
-        "revision" : "d86c695dae25f01254341addfbbe4580e899910b",
-        "version" : "0.28.1"
+        "revision" : "7219c441a89144d096702f29c877555b7ee72caa",
+        "version" : "0.30.1"
       }
     },
     {
@@ -25,7 +25,7 @@
       "location" : "https://github.com/tdocouto-cb/eudi-lib-ios-iso18013-data-transfer.git",
       "state" : {
         "branch" : "cleverbase-dev",
-        "revision" : "d3710995a992c9433bd7bbf61b75db50d1a15abf"
+        "revision" : "fb6b285ae39cadabddcfcfcb1727a154b89017d0"
       }
     },
     {
@@ -34,7 +34,7 @@
       "location" : "https://github.com/tdocouto-cb/eudi-lib-ios-iso18013-security.git",
       "state" : {
         "branch" : "cleverbase-dev",
-        "revision" : "27cb73fd2e4b9dd2d2192b4ce93f99eccabf82b3"
+        "revision" : "45c48e56d733fb24db0929a6bff0d265c47b8bdf"
       }
     },
     {
@@ -67,10 +67,10 @@
     {
       "identity" : "eudi-lib-ios-wallet-storage",
       "kind" : "remoteSourceControl",
-      "location" : "https://github.com/eu-digital-identity-wallet/eudi-lib-ios-wallet-storage.git",
+      "location" : "https://github.com/tdocouto-cb/eudi-lib-ios-wallet-storage.git",
       "state" : {
-        "revision" : "964aefcc29eae64036b30d868ef748da44e427c5",
-        "version" : "0.26.2"
+        "branch" : "cleverbase-dev",
+        "revision" : "8786328cc167d442d9442e8ce083b7c2245468fa"
       }
     },
     {
