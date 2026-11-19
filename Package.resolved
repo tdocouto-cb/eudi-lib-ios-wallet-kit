@@ -1,5 +1,5 @@
 {
-  "originHash" : "c3f4b590c6bd207daa2c78eef5db348529ef16ed4b6aef1d597127626369baef",
+  "originHash" : "8f16aee9b612ca461b62a455b758992d187771d3673e379b31719eb15cf605a6",
   "pins" : [
     {
       "identity" : "cryptoswift",
@@ -15,8 +15,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/eu-digital-identity-wallet/eudi-lib-ios-iso18013-data-model.git",
       "state" : {
-        "revision" : "7219c441a89144d096702f29c877555b7ee72caa",
-        "version" : "0.30.1"
+        "revision" : "1bcbbdefa5f82b5c5822e5220b24683b2e7834ef",
+        "version" : "0.30.2"
       }
     },
     {
@@ -25,7 +25,7 @@
       "location" : "https://github.com/tdocouto-cb/eudi-lib-ios-iso18013-data-transfer.git",
       "state" : {
         "branch" : "cleverbase-dev",
-        "revision" : "42f27a65e8e0de01165e17d97466f4dfb8fcfa68"
+        "revision" : "cbb2bb7cf96a94917cb3a112f947c15a5fbc7047"
       }
     },
     {
@@ -34,7 +34,7 @@
       "location" : "https://github.com/tdocouto-cb/eudi-lib-ios-iso18013-security.git",
       "state" : {
         "branch" : "cleverbase-dev",
-        "revision" : "45c48e56d733fb24db0929a6bff0d265c47b8bdf"
+        "revision" : "c441af8cf82ac169a62169a02225290f6840bbdd"
       }
     },
     {
@@ -51,8 +51,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/eu-digital-identity-wallet/eudi-lib-ios-openid4vp-swift.git",
       "state" : {
-        "revision" : "2c4a6b0c0d5e664c77b225d24fd9a5bc5c06e09c",
-        "version" : "0.44.2"
+        "revision" : "dc9c3871381a6731933f45a8095476e74421a9e5",
+        "version" : "0.44.3"
       }
     },
     {
@@ -78,8 +78,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/eu-digital-identity-wallet/eudi-lib-sdjwt-swift.git",
       "state" : {
-        "revision" : "0cc38aaab39bc41f61799e03322d0b7fdbb8705d",
-        "version" : "0.14.7"
+        "revision" : "3019ea2945efefcde342f462efdd35001df6613e",
+        "version" : "0.15.1"
       }
     },
     {
